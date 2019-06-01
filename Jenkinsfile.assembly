@@ -6,6 +6,11 @@ pipeline {
                 sh './mvnw clean'
             }
         }
+        stage('clean') {
+            steps {
+                sh './mvnw compile'
+            }
+        }
         stage('site') {
             steps {
                 sh './mvnw site'
