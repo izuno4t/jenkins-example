@@ -10,7 +10,17 @@ pipeline {
     stages {
         stage('build') {
             steps {
-                sh 'mvn clean site'
+                sh './mvnw clean compile'
+            }
+        }
+        stage('test') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+        stage('site') {
+            steps {
+                sh 'mvn site'
             }
         }
         stage('タスクスキャン'){

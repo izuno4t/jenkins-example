@@ -1,4 +1,4 @@
-package com.example.jenkins.service;
+package com.example.service;
 
 import org.apache.commons.lang3.StringUtils;
 
