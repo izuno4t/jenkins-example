@@ -29,7 +29,9 @@ pipeline {
             }
         }
         stage('Post'){
-            step([$class: 'JUnitResultArchiver', testResults: 'surefire-reports/TEST-*.xml' ])
+            steps {
+                step([$class: 'JUnitResultArchiver', testResults: 'surefire-reports/TEST-*.xml' ])
+            }
         }
     }
 }
