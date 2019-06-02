@@ -18,11 +18,13 @@ pipeline {
                 sh 'mvn test'
             }
         }
+        /*
         stage('site') {
             steps {
                 sh 'mvn site'
             }
         }
+        */
         stage('タスクスキャン'){
             steps {
                 openTasks canComputeNew: false, defaultEncoding: '', excludePattern: '**/*Test.java', healthy: '', high: 'FIXME', ignoreCase: true, low: 'XXX', normal: 'TODO', pattern: '**/*.java', unHealthy: ''
@@ -30,7 +32,7 @@ pipeline {
         }
         stage('Post'){
             steps {
-                step([$class: 'JUnitResultArchiver', testResults: 'surefire-reports/TEST-*.xml' ])
+                step([$class: 'JUnitResultArchiver', testResults: 'target/surefire-reports/TEST-*.xml' ])
             }
         }
     }
