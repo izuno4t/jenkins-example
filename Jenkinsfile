@@ -12,15 +12,7 @@ pipeline {
             }
         }
         stage('タスクスキャン'){
-            openTasks canComputeNew: false
-            , defaultEncoding: ''
-            , excludePattern: '**/*Test.java'
-            , healthy: '', high: 'FIXME'
-            , ignoreCase: true
-            , low: 'XXX'
-            , normal: 'TODO'
-            , pattern: '**/*.java'
-            , unHealthy: ''
+            openTasks canComputeNew: false, defaultEncoding: '', excludePattern: '**/*Test.java', healthy: '', high: 'FIXME', ignoreCase: true, low: 'XXX', normal: 'TODO', pattern: '**/*.java', unHealthy: ''
         }
     }
 }
