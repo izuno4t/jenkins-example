@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('build') {
             steps {
-                sh './mvnw clean compile'
+                sh 'mvn clean compile'
             }
         }
         stage('test') {
