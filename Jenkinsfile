@@ -17,6 +17,9 @@ pipeline {
             steps {
                 sh 'mvn test'
             }
+            steps {
+                junit ''
+            }
         }
         stage('site') {
             steps {
