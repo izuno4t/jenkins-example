@@ -16,7 +16,6 @@ pipeline {
         stage('test') {
             steps {
                 sh 'mvn test'
-                junit '**/surefire-reports/*.xml'
             }
         }
         stage('site') {
@@ -28,6 +27,9 @@ pipeline {
             steps {
                 openTasks canComputeNew: false, defaultEncoding: '', excludePattern: '**/*Test.java', healthy: '', high: 'FIXME', ignoreCase: true, low: 'XXX', normal: 'TODO', pattern: '**/*.java', unHealthy: ''
             }
+        }
+        stage('Post'){
+            step([$class: 'JUnitResultArchiver', testResults: 'surefire-reports/TEST-*.xml' ])
         }
     }
 }
