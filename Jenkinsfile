@@ -1,19 +1,9 @@
 pipeline {
-    agent { docker { image 'maven:3.6.1-jdk-8-slim' } }
+    agent { docker { image 'maven:3.3.3' } }
     stages {
-        stage('clean') {
-            steps {
-                sh './mvnw clean'
-            }
-        }
         stage('build') {
             steps {
-                sh './mvnw compile'
-            }
-        }
-        stage('site') {
-            steps {
-                sh './mvnw site'
+                sh 'mvn --version'
             }
         }
     }
