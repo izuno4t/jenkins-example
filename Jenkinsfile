@@ -68,12 +68,13 @@ pipeline {
          }
         stage('後処理'){
             steps {
-                step([
+                step ([
                     $class: 'JUnitResultArchiver',
                     testResults: 'target/surefire-reports/TEST-*.xml'
                 ]),
-                step([
-                    $class: 'sloccountPublish'
+                step ([
+                    $class: 'sloccountPublish',
+                    encoding: 'UTF-8'
                 ])
             }
         }
