@@ -44,6 +44,11 @@ pipeline {
                          // 一応エクセルファイルも成果物として保存する
                          archiveArtifacts "stepcount.xls"
                      },
+                     'LOC': {
+                        step(
+                            sh 'sloccount --duplicates --wide --details path-to-code/ > sloccount.sc'
+                        )
+                     },
                      'タスクスキャン': {
                          step([
                              $class: 'TasksPublisher',
@@ -63,9 +68,17 @@ pipeline {
                  )
              }
          }
-        stage('Post'){
+        stage('後処理'){
             steps {
-                step([$class: 'JUnitResultArchiver', testResults: 'target/surefire-reports/TEST-*.xml' ])
+                step([
+                    $class: 'JUnitResultArchiver',
+                    testResults: 'target/surefire-reports/TEST-*.xml'
+                ]),
+                step([
+                    $class: 'sloccountPublish',
+                    encoding: '',
+                    pattern: ''
+                ])
             }
         }
     }
