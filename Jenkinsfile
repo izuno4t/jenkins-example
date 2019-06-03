@@ -1,4 +1,5 @@
 pipeline {
+/*
     agent { 
         docker {
             image 'maven:3.6.1-jdk-8-slim'
@@ -7,6 +8,8 @@ pipeline {
             reuseNode true
         }
     }
+    */
+    agent any
     stages {
         stage('build') {
             steps {
@@ -46,7 +49,6 @@ pipeline {
                     }
                 }
                 stage('LOC') {
-                    agent any
                     steps {
                         sh 'sloccount --duplicates --wide --details . > sloccount.sc'
                     }
@@ -79,7 +81,8 @@ pipeline {
                 ])
                 step ([
                     $class: 'sloccountPublish',
-                    encoding: 'UTF-8'
+                    encoding: 'UTF-8',
+                    pattern: 'target/sloccount.scc'
                 ])
             }
         }
