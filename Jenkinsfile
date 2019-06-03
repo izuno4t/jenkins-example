@@ -71,7 +71,7 @@ pipeline {
                 step ([
                     $class: 'JUnitResultArchiver',
                     testResults: 'target/surefire-reports/TEST-*.xml'
-                ]),
+                ])
                 step ([
                     $class: 'sloccountPublish',
                     encoding: 'UTF-8'
