@@ -46,6 +46,7 @@ pipeline {
                     }
                 }
                 stage('LOC') {
+                    agent any
                     steps {
                         sh 'sloccount --duplicates --wide --details . > sloccount.sc'
                     }
