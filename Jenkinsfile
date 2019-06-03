@@ -28,9 +28,9 @@ pipeline {
         stage('静的コード解析') {
             steps {
                 // 並列処理の場合はparallelメソッドを使う
-                parallel(
-                    'タスクスキャン': {
-                        step (
+                parallel (
+                    stage''タスクスキャン') {
+                        steps (
                             openTasks canComputeNew: false, defaultEncoding: '', excludePattern: '**/*Test.java', healthy: '', high: 'FIXME', ignoreCase: true, low: 'XXX', normal: 'TODO', pattern: '**/*.java', unHealthy: ''
                         )
                     }
