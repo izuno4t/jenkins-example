@@ -31,25 +31,10 @@ pipeline {
                 parallel(
                     'タスクスキャン': {
                         step (
-                            openTasks canComputeNew: false, defaultEncoding: 'UTF-8', pattern: '**/*.java', excludePattern: '**/*Test.java', ignoreCase: true, high: 'FIXME', normal: 'TODO', low: 'XXX', healthy: '', unHealthy: ''
+                            openTasks canComputeNew: false, defaultEncoding: '', excludePattern: '**/*Test.java', healthy: '', high: 'FIXME', ignoreCase: true, low: 'XXX', normal: 'TODO', pattern: '**/*.java', unHealthy: ''
                         )
                     }
                 )
-            }
-
-            post {
-                always {
-                   // JavaDocの警告を収集
-                    step([
-                        $class: 'WarningsPublisher',
-                        consoleParsers: [
-                            [parserName: 'JavaDoc Tool']
-                        ],
-                        canComputeNew: false,
-                        canResolveRelativesPaths: false,
-                        usePreviousBuildAsReference: true
-                    ])
-                }
             }
         }
         stage('Post'){
