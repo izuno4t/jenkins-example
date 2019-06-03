@@ -29,21 +29,8 @@ pipeline {
             steps {
                 // 並列処理の場合はparallelメソッドを使う
                 parallel(
-                    'ステップカウント': {
-                        // レポート作成
-                        // outputFileとoutputFormatを指定するとエクセルファイルも作成してくれる
-                        stepcounter outputFile: 'stepcount.xls', outputFormat: 'excel', settings: [
-                            [key:'Java', filePattern: "${javaDir}/**/*.java"],
-                            [key:'SQL', filePattern: "${resourcesDir}/**/*.sql"],
-                            [key:'HTML', filePattern: "${resourcesDir}/**/*.html"],
-                            [key:'JS', filePattern: "${resourcesDir}/**/*.js"],
-                            [key:'CSS', filePattern: "${resourcesDir}/**/*.css"]
-                        ]
-                        // 一応エクセルファイルも成果物として保存する
-                        archiveArtifacts "stepcount.xls"
-                    },
                     'タスクスキャン': {
-                        step(
+                        step (
                             openTasks canComputeNew: false, defaultEncoding: 'UTF-8', pattern: '**/*.java', excludePattern: '**/*Test.java', ignoreCase: true, high: 'FIXME', normal: 'TODO', low: 'XXX', healthy: '', unHealthy: ''
                         )
                     }
