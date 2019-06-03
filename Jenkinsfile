@@ -53,6 +53,7 @@ pipeline {
                              high: 'System.out.System.err',
                              normal: 'TODO,FIXME,XXX',
                          ])
+                     }
                  )
              }
          }
