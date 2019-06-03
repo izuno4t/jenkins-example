@@ -13,7 +13,7 @@ pipeline {
     stages {
         stage('build') {
             steps {
-                sh 'mvn clean compile'
+                sh './mvnw clean compile'
             }
         }
         stage('test') {
