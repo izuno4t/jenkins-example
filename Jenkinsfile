@@ -44,27 +44,8 @@ pipeline {
                     },
                     'タスクスキャン': {
                         step(
-                            openTasks
-                            canComputeNew: false,
-                            defaultEncoding: 'UTF-8',
-                            pattern: '**/*.java',
-                            excludePattern: '**/*Test.java',
-                            ignoreCase: true,
-                            high: 'FIXME',
-                            normal: 'TODO',
-                            low: 'XXX',
-                            healthy: '',
-                            unHealthy: ''
+                            openTasks canComputeNew: false, defaultEncoding: 'UTF-8', pattern: '**/*.java', excludePattern: '**/*Test.java', ignoreCase: true, high: 'FIXME', normal: 'TODO', low: 'XXX', healthy: '', unHealthy: ''
                         )
-                    },
-                    'JavaDoc': {
-                        gradlew 'javadoc -x classes'
-                        step([
-                            $class: 'JavadocArchiver',
-                            // Javadocのindex.htmlがあるフォルダのパスを指定する
-                            javadocDir: "${javadocDir}",
-                            keepAll: true
-                        ])
                     }
                 )
             }
