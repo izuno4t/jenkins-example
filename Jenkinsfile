@@ -12,27 +12,11 @@ pipeline {
     agent any
     stages {
         stage('build') {
-            agent {
-                docker {
-                    image 'maven:3.6.1-jdk-8-slim'
-                    // image 'maven:3-alpine'
-                    args '-v $HOME/.m2:/root/.m2:z -u root'
-                    reuseNode true
-                }
-            }
             steps {
                 sh 'mvn clean compile'
             }
         }
         stage('test') {
-            agent {
-                docker {
-                    image 'maven:3.6.1-jdk-8-slim'
-                    // image 'maven:3-alpine'
-                    args '-v $HOME/.m2:/root/.m2:z -u root'
-                    reuseNode true
-                }
-            }
             steps {
                 sh 'mvn test'
             }
