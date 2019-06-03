@@ -73,7 +73,7 @@ pipeline {
                     testResults: 'target/surefire-reports/TEST-*.xml'
                 ]),
                 step([
-                    sloccountPublish
+                    $class: 'sloccountPublish'
                 ])
             }
         }
