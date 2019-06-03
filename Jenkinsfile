@@ -25,9 +25,63 @@ pipeline {
             }
         }
         */
-        stage('タスクスキャン'){
+        stage('静的コード解析') {
             steps {
-                openTasks canComputeNew: false, defaultEncoding: '', excludePattern: '**/*Test.java', healthy: '', high: 'FIXME', ignoreCase: true, low: 'XXX', normal: 'TODO', pattern: '**/*.java', unHealthy: ''
+                // 並列処理の場合はparallelメソッドを使う
+                parallel(
+                    'ステップカウント': {
+                        // レポート作成
+                        // outputFileとoutputFormatを指定するとエクセルファイルも作成してくれる
+                        stepcounter outputFile: 'stepcount.xls', outputFormat: 'excel', settings: [
+                            [key:'Java', filePattern: "${javaDir}/**/*.java"],
+                            [key:'SQL', filePattern: "${resourcesDir}/**/*.sql"],
+                            [key:'HTML', filePattern: "${resourcesDir}/**/*.html"],
+                            [key:'JS', filePattern: "${resourcesDir}/**/*.js"],
+                            [key:'CSS', filePattern: "${resourcesDir}/**/*.css"]
+                        ]
+                        // 一応エクセルファイルも成果物として保存する
+                        archiveArtifacts "stepcount.xls"
+                    },
+                    'タスクスキャン': {
+                        step(
+                            openTasks
+                            canComputeNew: false,
+                            defaultEncoding: 'UTF-8',
+                            pattern: '**/*.java',
+                            excludePattern: '**/*Test.java',
+                            ignoreCase: true,
+                            high: 'FIXME',
+                            normal: 'TODO',
+                            low: 'XXX',
+                            healthy: '',
+                            unHealthy: ''
+                        )
+                    },
+                    'JavaDoc': {
+                        gradlew 'javadoc -x classes'
+                        step([
+                            $class: 'JavadocArchiver',
+                            // Javadocのindex.htmlがあるフォルダのパスを指定する
+                            javadocDir: "${javadocDir}",
+                            keepAll: true
+                        ])
+                    }
+                )
+            }
+
+            post {
+                always {
+                   // JavaDocの警告を収集
+                    step([
+                        $class: 'WarningsPublisher',
+                        consoleParsers: [
+                            [parserName: 'JavaDoc Tool']
+                        ],
+                        canComputeNew: false,
+                        canResolveRelativesPaths: false,
+                        usePreviousBuildAsReference: true
+                    ])
+                }
             }
         }
         stage('Post'){
