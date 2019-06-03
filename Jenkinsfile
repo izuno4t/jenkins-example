@@ -50,7 +50,7 @@ pipeline {
                 }
                 stage('LOC') {
                     steps {
-                        sh 'sloccount --duplicates --wide --details . > sloccount.sc'
+                        sh 'sloccount --duplicates --wide --details . > target/sloccount.sc'
                     }
                 }
                 stage('タスクスキャン') {
@@ -82,7 +82,7 @@ pipeline {
                 step ([
                     $class: 'SloccountPublisher',
                     encoding: 'UTF-8',
-                    pattern: 'target/sloccount.scc'
+                    pattern: 'target/sloccount.sc'
                 ])
             }
         }
