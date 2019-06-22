@@ -44,7 +44,7 @@ pipeline {
                                 // archiveArtifacts "**/findbugs.xml"
                                 archiveArtifacts "**/spotbugs.xml"
                                 archiveArtifacts "**/pmd.xml"
-                                archiveArtifacts "**cpd.xml"
+                                archiveArtifacts "**/cpd.xml"
                             }
                         }
                     }
