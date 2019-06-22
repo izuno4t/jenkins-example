@@ -95,6 +95,7 @@
 					<configLocation>sun_checks.xml</configLocation>
 					<linkXRef>false</linkXRef>
 					<failsOnError>false</failsOnError>
+					<failOnViolation>false</failOnViolation>
 				</configuration>
 				<executions>
 					<execution>
