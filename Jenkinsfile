@@ -102,11 +102,11 @@ pipeline {
                     $class: 'JUnitResultArchiver',
                     testResults: 'target/surefire-reports/TEST-*.xml'
                 ])
-                step ([
-                    $class: 'SloccountPublisher',
-                    encoding: 'UTF-8',
-                    pattern: 'target/sloccount.sc'
-                ])
+                // step ([
+                //     $class: 'SloccountPublisher',
+                //     encoding: 'UTF-8',
+                //     pattern: 'target/sloccount.sc'
+                // ])
             }
         }
     }
