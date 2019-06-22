@@ -33,7 +33,12 @@ pipeline {
                         stage('Verify') {
                             docker.image('azul/zulu-openjdk-alpine:8u202').inside("-v $HOME/.m2:/root/.m2:z -u root --link ${c.id}:mysql-server") {
                                 sh './mvnw verify'
-                                jacoco exclusionPattern: ' **/*Test*.class', inclusionPattern: '*/*.class', sourceExclusionPattern: '**/*Test.java'
+                                jacoco()
+                                archiveArtifacts "**/checkstyle-result.xml"
+                                archiveArtifacts "**/findbugs.xml"
+                                archiveArtifacts "**/spotbugs.xml"
+                                archiveArtifacts "**/pmd.xml"
+                                archiveArtifacts "**cpd.xml"
                             }
                         }
                     }
@@ -50,11 +55,11 @@ pipeline {
                      stepcounter outputFile: 'stepcount.xls',
                      outputFormat: 'excel',
                      settings: [
-                         [key:'Java', filePattern: "**/*.java"],
-                         [key:'SQL', filePattern: "**/*.sql"],
-                         [key:'HTML', filePattern: "**/*.html"],
-                         [key:'JavaScript', filePattern: "**/*.js"],
-                         [key:'CSS', filePattern: "**/*.css"]
+                         [key:'Java', filePattern: "src/**/*.java"],
+                         [key:'SQL', filePattern: "src/**/*.sql"],
+                         [key:'HTML', filePattern: "src/**/*.html"],
+                         [key:'JavaScript', filePattern: "src/**/*.js"],
+                         [key:'CSS', filePattern: "src/**/*.css"]
                      ]
                      // 一応エクセルファイルも成果物として保存する
                      archiveArtifacts "stepcount.xls"
@@ -62,7 +67,7 @@ pipeline {
                 }
                 stage('LOC') {
                     steps {
-                        sh 'sloccount --duplicates --wide --details . > target/sloccount.sc'
+                        sh 'sloccount $WORKSPACE/src --duplicates --wide --details . > target/sloccount.sc'
                     }
                 }
                 stage('タスクスキャン') {
