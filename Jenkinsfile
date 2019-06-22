@@ -84,25 +84,40 @@ pipeline {
         //         }
         //     }
         // }
-        stage('レポート収集'){
-            steps {
-                step ([
-                    $class: 'JUnitResultArchiver',
-                    testResults: 'target/surefire-reports/TEST-*.xml'
-                ])
-                step (
-                    jacoco()
-                    recordIssues enabledForFailure: true, tool: checkStyle()
-                    recordIssues enabledForFailure: true, tool: spotBugs()
-                    recordIssues enabledForFailure: true, tool: cpd(pattern: '**/target/cpd.xml')
-                    recordIssues enabledForFailure: true, tool: pmdParser(pattern: '**/target/pmd.xml')
-                )
-                step ([
-                    $class: 'SloccountPublisher',
-                    encoding: 'UTF-8',
-                    pattern: 'target/sloccount.sc'
-                ])
-            }
+        // stage('レポート収集'){
+        //     steps {
+        //         // step ([
+        //         //     $class: 'JUnitResultArchiver',
+        //         //     testResults: 'target/surefire-reports/TEST-*.xml'
+        //         // ])
+        //         // step (
+        //         //     junit testResults: '**/target/surefire-reports/TEST-*.xml'
+
+        //         //     jacoco()
+        //         //     recordIssues enabledForFailure: true, tool: checkStyle()
+        //         //     recordIssues enabledForFailure: true, tool: spotBugs()
+        //         //     recordIssues enabledForFailure: true, tool: cpd(pattern: '**/target/cpd.xml')
+        //         //     recordIssues enabledForFailure: true, tool: pmdParser(pattern: '**/target/pmd.xml')
+        //         // )
+        //         // step ([
+        //         //     $class: 'SloccountPublisher',
+        //         //     encoding: 'UTF-8',
+        //         //     pattern: 'target/sloccount.sc'
+        //         // ])
+        //     }
+        // }
+    }
+    post {
+        always {
+            junit testResults: '**/target/surefire-reports/TEST-*.xml'
+        } 
+        success {
+            recordIssues enabledForFailure: true, tools: [mavenConsole(), java(), javaDoc()]
+            recordIssues enabledForFailure: true, tool: checkStyle()
+            recordIssues enabledForFailure: true, tool: findBugs()
+            recordIssues enabledForFailure: true, tool: spotBugs()
+            recordIssues enabledForFailure: true, tool: cpd(pattern: '**/target/cpd.xml')
+            recordIssues enabledForFailure: true, tool: pmdParser(pattern: '**/target/pmd.xml')
         }
     }
 }
