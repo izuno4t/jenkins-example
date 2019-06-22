@@ -9,6 +9,9 @@ try {
 
 pipeline {
     agent any
+    environment {
+        PORT = ${port}
+    }    
     stages {
         stage('PreProcess') {
             steps {
@@ -30,7 +33,7 @@ pipeline {
         stage('Test & Verify') {
             steps {
                 script{
-                    docker.image('mysql:5.7').withRun('-e "MYSQL_DATABASE=example" -e "MYSQL_USER=demo" -e "MYSQL_PASSWORD=password" -e "MYSQL_ROOT_PASSWORD=password" -p "${port}:3306"') { c ->
+                    docker.image('mysql:5.7').withRun('-e "MYSQL_DATABASE=example" -e "MYSQL_USER=demo" -e "MYSQL_PASSWORD=password" -e "MYSQL_ROOT_PASSWORD=password" -p "${env.PORT}:3306"') { c ->
                         stage('Database Setup') {
                             docker.image('mysql:5.7').inside("--link ${c.id}:db") {
                                 sh "while ! mysqladmin ping -hdb -P${port} --silent; do sleep 1; done"
