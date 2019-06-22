@@ -1,33 +1,41 @@
 pipeline {
-/*
-    agent { 
-        docker {
-            image 'maven:3.6.1-jdk-8-slim'
-            // image 'maven:3-alpine'
-            args '-v $HOME/.m2:/root/.m2:z -u root'
-            reuseNode true
-        }
-    }
-    */
-    agent any
+    agent none
     stages {
         stage('build') {
+            agent {
+                docker {
+                    image 'azul/zulu-openjdk-alpine:8u202'
+                    args '-v $HOME/.m2:/root/.m2:z -u root'
+                    reuseNode true
+                }
+            }
             steps {
                 sh './mvnw clean compile'
             }
         }
         stage('test') {
             steps {
-                sh 'mvn test'
+                step {
+                    script{
+                        docker.image('mysql:5.7').withRun('-e "MYSQL_DATABASE=example" -e "MYSQL_USER=demo" -e "MYSQL_PASSWORD=password" -e "MYSQL_ROOT_PASSWORD=password" -p "3306:3306"') { c ->
+                            stage('MySQL Setup') {
+                                docker.image('mysql:5.7').inside("--link ${c.id}:db") {
+                                    sh 'while ! mysqladmin ping -hdb --silent; do sleep 1; done'
+                                }
+                                docker.image('azul/zulu-openjdk-alpine:8u202').inside("-v $HOME/.m2:/root/.m2:z -u root --link ${c.id}:mysql-server") {
+                                    sh './mvnw clean flyway:migrate -Dflyway.configFiles=./src/main/resources/application.properties -Dflyway.url=jdbc:mysql://mysql-server:3306/example?autoReconnect=true'
+                                }
+                            }
+                            stage('Test') {
+                                docker.image('azul/zulu-openjdk-alpine:8u202').inside("-v $HOME/.m2:/root/.m2:z -u root --link ${c.id}:mysql-server") {
+                                    sh './mvnw clean test'
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
-        /*
-        stage('site') {
-            steps {
-                sh 'mvn site'
-            }
-        }
-        */
          stage('静的コード解析') {
             // 並列処理の場合はparallelメソッドを使う
             parallel {
