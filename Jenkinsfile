@@ -13,11 +13,11 @@ pipeline {
         //         sh './mvnw clean compile'
         //     }
         // }
-        stage('テストとレポーティング') {
+        stage('Test & Verify') {
             steps {
                 script{
                     docker.image('mysql:5.7').withRun('-e "MYSQL_DATABASE=example" -e "MYSQL_USER=demo" -e "MYSQL_PASSWORD=password" -e "MYSQL_ROOT_PASSWORD=password" -p "3306:3306"') { c ->
-                        stage('MySQL Setup') {
+                        stage('Database Setup') {
                             docker.image('mysql:5.7').inside("--link ${c.id}:db") {
                                 sh 'while ! mysqladmin ping -hdb --silent; do sleep 1; done'
                             }
@@ -33,18 +33,6 @@ pipeline {
                         stage('Verify') {
                             docker.image('azul/zulu-openjdk-alpine:8u202').inside("-v $HOME/.m2:/root/.m2:z -u root --link ${c.id}:mysql-server") {
                                 sh './mvnw verify'
-                                jacoco()
-
-                                recordIssues enabledForFailure: true, tool: checkStyle()
-                                recordIssues enabledForFailure: true, tool: spotBugs()
-                                recordIssues enabledForFailure: true, tool: cpd(pattern: '**/target/cpd.xml')
-                                recordIssues enabledForFailure: true, tool: pmdParser(pattern: '**/target/pmd.xml')
-
-                                archiveArtifacts "**/checkstyle-result.xml"
-                                // archiveArtifacts "**/findbugs.xml"
-                                archiveArtifacts "**/spotbugs.xml"
-                                archiveArtifacts "**/pmd.xml"
-                                archiveArtifacts "**/cpd.xml"
                             }
                         }
                     }
@@ -96,17 +84,24 @@ pipeline {
         //         }
         //     }
         // }
-        stage('後処理'){
+        stage('レポート収集'){
             steps {
                 step ([
                     $class: 'JUnitResultArchiver',
                     testResults: 'target/surefire-reports/TEST-*.xml'
                 ])
-                // step ([
-                //     $class: 'SloccountPublisher',
-                //     encoding: 'UTF-8',
-                //     pattern: 'target/sloccount.sc'
-                // ])
+                step (
+                    jacoco()
+                    recordIssues enabledForFailure: true, tool: checkStyle()
+                    recordIssues enabledForFailure: true, tool: spotBugs()
+                    recordIssues enabledForFailure: true, tool: cpd(pattern: '**/target/cpd.xml')
+                    recordIssues enabledForFailure: true, tool: pmdParser(pattern: '**/target/pmd.xml')
+                )
+                step ([
+                    $class: 'SloccountPublisher',
+                    encoding: 'UTF-8',
+                    pattern: 'target/sloccount.sc'
+                ])
             }
         }
     }
