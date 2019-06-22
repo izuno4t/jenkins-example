@@ -33,23 +33,23 @@ pipeline {
         stage('Test & Verify') {
             steps {
                 script{
-                    docker.image('mysql:5.7').withRun('-e "MYSQL_DATABASE=example" -e "MYSQL_USER=demo" -e "MYSQL_PASSWORD=password" -e "MYSQL_ROOT_PASSWORD=password" -p "${env.PORT}:3306"') { c ->
+                    docker.image('mysql:5.7').withRun('-e "MYSQL_DATABASE=example" -e "MYSQL_USER=demo" -e "MYSQL_PASSWORD=password" -e "MYSQL_ROOT_PASSWORD=password"') { c ->
                         stage('Database Setup') {
                             docker.image('mysql:5.7').inside("--link ${c.id}:db") {
-                                sh "while ! mysqladmin ping -hdb -P${port} --silent; do sleep 1; done"
+                                sh "while ! mysqladmin ping -hdb -P3306 --silent; do sleep 1; done"
                             }
                             docker.image('azul/zulu-openjdk-alpine:8u202').inside("-v $HOME/.m2:/root/.m2:z -u root --link ${c.id}:mysql-server") {
-                                sh "./mvnw clean flyway:migrate -Dflyway.configFiles=./src/main/resources/application.properties -Dflyway.url=jdbc:mysql://mysql-server:${port}/example?autoReconnect=true"
+                                sh "./mvnw clean flyway:migrate -Dflyway.configFiles=./src/main/resources/application.properties -Dflyway.url=jdbc:mysql://mysql-server:3306/example?autoReconnect=true"
                             }
                         }
                         stage('Test') {
                             docker.image('azul/zulu-openjdk-alpine:8u202').inside("-v $HOME/.m2:/root/.m2:z -u root --link ${c.id}:mysql-server") {
-                                sh "./mvnw clean test -Dspring.datasource.url=jdbc:mysql://mysql-server:${port}/example?autoreconnect=true"
+                                sh "./mvnw clean test -Dspring.datasource.url=jdbc:mysql://mysql-server:3306/example?autoreconnect=true"
                             }
                         }
                         stage('Verify') {
                             docker.image('azul/zulu-openjdk-alpine:8u202').inside("-v $HOME/.m2:/root/.m2:z -u root --link ${c.id}:mysql-server") {
-                                sh "./mvnw verify -Dspring.datasource.url=jdbc:mysql://mysql-server:${port}/example?autoreconnect=true"
+                                sh "./mvnw verify -Dspring.datasource.url=jdbc:mysql://mysql-server:3306/example?autoreconnect=true"
                             }
                         }
                     }
