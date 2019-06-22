@@ -92,11 +92,7 @@
 					</dependency>
 				</dependencies>
 				<configuration>
-					<configLocation>google_checks.xml</configLocation>
-					<failsOnError>true</failsOnError>
-					<failOnViolation>true</failOnViolation>
-					<violationSeverity>error</violationSeverity>
-					<consoleOutput>true</consoleOutput>
+					<configLocation>sun_checks.xml</configLocation>
 				</configuration>
 				<executions>
 					<execution>
@@ -120,10 +116,7 @@
 					</dependency>
 				</dependencies>
 				<configuration>
-					<effort>Default</effort>
-					<threshold>Default</threshold>
-					<failOnError>true</failOnError>
-					<trace>true</trace>
+					<failOnError>false</failOnError>
 					<xmlOutput>true</xmlOutput>
 				</configuration>
 				<executions>
@@ -140,18 +133,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId>
 				<version>3.12.0</version>
-				<dependencies>
-					<dependency>
-						<groupId>net.sourceforge.pmd</groupId>
-						<artifactId>pmd-core</artifactId>
-						<version>6.13.0</version>
-					</dependency>
-					<dependency>
-						<groupId>net.sourceforge.pmd</groupId>
-						<artifactId>pmd-java</artifactId>
-						<version>6.13.0</version>
-					</dependency>
-				</dependencies>
 				<configuration>
 					<rulesets>
 						<ruleset>/category/java/bestpractices.xml</ruleset>
@@ -166,12 +147,10 @@
 					<excludes>
 						<exclude>**/test/*Test*.java</exclude>
 					</excludes>
-					<targetJdk>11</targetJdk>
-					<failOnViolation>true</failOnViolation>
+					<targetJdk>1.8</targetJdk>
+					<failOnViolation>false</failOnViolation>
 					<failurePriority>0</failurePriority>
-					<printFailingErrors>true</printFailingErrors>
-					<verbose>true</verbose>
-					<analysisCache>true</analysisCache>
+					<linkXRef>false</linkXRef>
 				</configuration>
 				<executions>
 					<execution>
