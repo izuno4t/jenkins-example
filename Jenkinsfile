@@ -1,5 +1,5 @@
 pipeline {
-    agent none
+    agent any
     stages {
         stage('build') {
             agent {
@@ -34,7 +34,7 @@ pipeline {
                 }
             }
         }
-         stage('静的コード解析') {
+        stage('静的コード解析') {
             // 並列処理の場合はparallelメソッドを使う
             parallel {
                 stage('ステップカウント') {
@@ -77,8 +77,8 @@ pipeline {
                         ])
                     }
                 }
-             }
-         }
+            }
+        }
         stage('後処理'){
             steps {
                 step ([
