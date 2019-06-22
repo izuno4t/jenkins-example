@@ -30,9 +30,9 @@ pipeline {
                                 sh './mvnw clean test'
                             }
                         }
-                        stage('Site') {
+                        stage('Verify') {
                             docker.image('azul/zulu-openjdk-alpine:8u202').inside("-v $HOME/.m2:/root/.m2:z -u root --link ${c.id}:mysql-server") {
-                                sh './mvnw site'
+                                sh './mvnw verify'
                                 jacoco exclusionPattern: ' **/*Test*.class', inclusionPattern: '*/*.class', sourceExclusionPattern: '**/*Test.java'
                             }
                         }
