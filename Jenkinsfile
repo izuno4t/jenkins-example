@@ -15,21 +15,19 @@ pipeline {
         }
         stage('test') {
             steps {
-                step {
-                    script{
-                        docker.image('mysql:5.7').withRun('-e "MYSQL_DATABASE=example" -e "MYSQL_USER=demo" -e "MYSQL_PASSWORD=password" -e "MYSQL_ROOT_PASSWORD=password" -p "3306:3306"') { c ->
-                            stage('MySQL Setup') {
-                                docker.image('mysql:5.7').inside("--link ${c.id}:db") {
-                                    sh 'while ! mysqladmin ping -hdb --silent; do sleep 1; done'
-                                }
-                                docker.image('azul/zulu-openjdk-alpine:8u202').inside("-v $HOME/.m2:/root/.m2:z -u root --link ${c.id}:mysql-server") {
-                                    sh './mvnw clean flyway:migrate -Dflyway.configFiles=./src/main/resources/application.properties -Dflyway.url=jdbc:mysql://mysql-server:3306/example?autoReconnect=true'
-                                }
+                script{
+                    docker.image('mysql:5.7').withRun('-e "MYSQL_DATABASE=example" -e "MYSQL_USER=demo" -e "MYSQL_PASSWORD=password" -e "MYSQL_ROOT_PASSWORD=password" -p "3306:3306"') { c ->
+                        stage('MySQL Setup') {
+                            docker.image('mysql:5.7').inside("--link ${c.id}:db") {
+                                sh 'while ! mysqladmin ping -hdb --silent; do sleep 1; done'
                             }
-                            stage('Test') {
-                                docker.image('azul/zulu-openjdk-alpine:8u202').inside("-v $HOME/.m2:/root/.m2:z -u root --link ${c.id}:mysql-server") {
-                                    sh './mvnw clean test'
-                                }
+                            docker.image('azul/zulu-openjdk-alpine:8u202').inside("-v $HOME/.m2:/root/.m2:z -u root --link ${c.id}:mysql-server") {
+                                sh './mvnw clean flyway:migrate -Dflyway.configFiles=./src/main/resources/application.properties -Dflyway.url=jdbc:mysql://mysql-server:3306/example?autoReconnect=true'
+                            }
+                        }
+                        stage('Test') {
+                            docker.image('azul/zulu-openjdk-alpine:8u202').inside("-v $HOME/.m2:/root/.m2:z -u root --link ${c.id}:mysql-server") {
+                                sh './mvnw clean test'
                             }
                         }
                     }
