@@ -96,6 +96,7 @@
 					<linkXRef>false</linkXRef>
 					<failsOnError>false</failsOnError>
 					<failOnViolation>false</failOnViolation>
+					<consoleOutput>false</consoleOutput>
 				</configuration>
 				<executions>
 					<execution>
