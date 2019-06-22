@@ -32,7 +32,7 @@ pipeline {
                         }
                         stage('Verify') {
                             docker.image('azul/zulu-openjdk-alpine:8u202').inside("-v $HOME/.m2:/root/.m2:z -u root --link ${c.id}:mysql-server") {
-                                sh './mvnw verify'
+                                sh "./mvnw verify -Dspring.datasource.url=jdbc:mysql://mysql-server:3306/example?autoreconnect=true"
                             }
                         }
                     }
