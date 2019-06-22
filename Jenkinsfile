@@ -1,4 +1,12 @@
-def port = new ServerSocket(0).withCloseable { socket -> socket.getLocalPort() }
+def port = 0;
+try {
+    def serverSocket = new ServerSocket(0);
+    port = serverSocket.getLocalPort();
+    serverSocket.close()
+} catch (IOException ex) {
+    System.err.println("no available ports");
+}
+
 pipeline {
     agent any
     stages {
