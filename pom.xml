@@ -93,6 +93,8 @@
 				</dependencies>
 				<configuration>
 					<configLocation>sun_checks.xml</configLocation>
+					<linkXRef>false</linkXRef>
+					<failsOnError>false</failsOnError>
 				</configuration>
 				<executions>
 					<execution>
