@@ -10,7 +10,7 @@ pipeline {
             agent {
                 docker {
                     image 'azul/zulu-openjdk-alpine:8u202'
-                    args '-v $HOME/.m2:/root/.m2:z -u root'
+                    args '-v $HOME/.m2:/root/.m2 -v $HOME/.gradle:/root/.gradle -u root'
                     reuseNode true
                 }
             }
@@ -26,17 +26,17 @@ pipeline {
                             docker.image('mysql:5.7').inside("--link ${c.id}:db") {
                                 sh "while ! mysqladmin ping -hdb -P3306 --silent; do sleep 1; done"
                             }
-                            docker.image('azul/zulu-openjdk-alpine:8u202').inside("-v $HOME/.m2:/root/.m2:z -u root --link ${c.id}:mysql-server") {
+                            docker.image('azul/zulu-openjdk-alpine:8u202').inside("-v $HOME/.m2:/root/.m2:z -v $HOME/.gradle:/root/.gradle -u root --link ${c.id}:mysql-server") {
                                 sh "./gradlew clean flywayMigrate -Dflyway.configFiles=./src/main/resources/application.properties -Dflyway.url=jdbc:mysql://mysql-server:3306/example?autoReconnect=true"
                             }
                         }
                         stage('Test') {
-                            docker.image('azul/zulu-openjdk-alpine:8u202').inside("-v $HOME/.m2:/root/.m2:z -u root --link ${c.id}:mysql-server") {
+                            docker.image('azul/zulu-openjdk-alpine:8u202').inside("-v $HOME/.m2:/root/.m2:z -v $HOME/.gradle:/root/.gradle  -u root --link ${c.id}:mysql-server") {
                                 sh "./gradlew clean test -Dspring.datasource.url=jdbc:mysql://mysql-server:3306/example?autoreconnect=true"
                             }
                         }
                         stage('Verify') {
-                            docker.image('azul/zulu-openjdk-alpine:8u202').inside("-v $HOME/.m2:/root/.m2:z -u root --link ${c.id}:mysql-server") {
+                            docker.image('azul/zulu-openjdk-alpine:8u202').inside("-v $HOME/.m2:/root/.m2:z -v $HOME/.gradle:/root/.gradle  -u root --link ${c.id}:mysql-server") {
                                 sh "./gradlew check -Dspring.datasource.url=jdbc:mysql://mysql-server:3306/example?autoreconnect=true"
                             }
                         }
