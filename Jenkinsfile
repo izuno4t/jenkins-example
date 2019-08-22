@@ -15,7 +15,7 @@ pipeline {
                 }
             }
             steps {
-                sh './mvnw clean compile'
+                sh './gradlew clean compileJava CompileTestJava'
             }
         }
         stage('Test & Verify') {
@@ -27,89 +27,22 @@ pipeline {
                                 sh "while ! mysqladmin ping -hdb -P3306 --silent; do sleep 1; done"
                             }
                             docker.image('azul/zulu-openjdk-alpine:8u202').inside("-v $HOME/.m2:/root/.m2:z -u root --link ${c.id}:mysql-server") {
-                                sh "./mvnw clean flyway:migrate -Dflyway.configFiles=./src/main/resources/application.properties -Dflyway.url=jdbc:mysql://mysql-server:3306/example?autoReconnect=true"
+                                sh "./gradlew clean flyway:migrate -Dflyway.configFiles=./src/main/resources/application.properties -Dflyway.url=jdbc:mysql://mysql-server:3306/example?autoReconnect=true"
                             }
                         }
                         stage('Test') {
                             docker.image('azul/zulu-openjdk-alpine:8u202').inside("-v $HOME/.m2:/root/.m2:z -u root --link ${c.id}:mysql-server") {
-                                sh "./mvnw clean test -Dspring.datasource.url=jdbc:mysql://mysql-server:3306/example?autoreconnect=true"
+                                sh "./gradlew clean test -Dspring.datasource.url=jdbc:mysql://mysql-server:3306/example?autoreconnect=true"
                             }
                         }
                         stage('Verify') {
                             docker.image('azul/zulu-openjdk-alpine:8u202').inside("-v $HOME/.m2:/root/.m2:z -u root --link ${c.id}:mysql-server") {
-                                sh "./mvnw verify -Dspring.datasource.url=jdbc:mysql://mysql-server:3306/example?autoreconnect=true"
+                                sh "./gradlew check -Dspring.datasource.url=jdbc:mysql://mysql-server:3306/example?autoreconnect=true"
                             }
                         }
                     }
                 }
             }
-        }
-        stage('レポーティング') {
-            // 並列処理の場合はparallelメソッドを使う
-            parallel {
-                stage('JavaDoc') {
-                    agent {
-                        docker {
-                            image 'azul/zulu-openjdk-alpine:8u202'
-                            args '-v $HOME/.m2:/root/.m2:z -u root'
-                            reuseNode true
-                        }
-                    }
-                    steps {
-                        sh './mvnw javadoc:javadoc'
-                    }
-                }
-                stage('ステップカウント') {
-                    steps {
-                     // レポート作成
-                     // outputFileとoutputFormatを指定するとエクセルファイルも作成してくれる
-                     stepcounter outputFile: 'stepcount.xls',
-                     outputFormat: 'excel',
-                     settings: [
-                         [key:'Java', filePattern: "src/**/*.java"],
-                         [key:'SQL', filePattern: "src/**/*.sql"],
-                         [key:'HTML', filePattern: "src/**/*.html"],
-                         [key:'JavaScript', filePattern: "src/**/*.js"],
-                         [key:'CSS', filePattern: "src/**/*.css"]
-                     ]
-                     // 一応エクセルファイルも成果物として保存する
-                     archiveArtifacts "stepcount.xls"
-                    }
-                }
-                stage('LOC') {
-                    steps {
-                        sh 'sloccount $WORKSPACE/src --duplicates --wide --details . > target/sloccount.sc'
-                    }
-                }
-                stage('タスクスキャン') {
-                    steps {
-                        step([
-                            $class: 'TasksPublisher',
-                            canComputeNew: true,
-                            pattern: '**/*.java',
-                            excludePattern: '**/*.Test.java',
-                            defaultEncoding: 'UTF-8',
-                            // 集計対象を検索するときに大文字小文字を区別するか
-                            ignoreCase: true,
-                            // 優先度別に集計対象の文字列を指定できる
-                            // 複数指定する場合はカンマ区切りの文字列を指定する
-                            high: 'FIXME',
-                            normal: 'TODO',
-                            low: 'XXX'
-                        ])
-                    }
-                }
-            }
-        }
-    }
-    post {
-        always {
-            junit testResults: '**/target/surefire-reports/TEST-*.xml'
-            jacoco()
-        } 
-        success {
-            recordIssues enabledForFailure: true, tools: [mavenConsole(), java(), javaDoc()]
-            recordIssues enabledForFailure: true, aggregatingResults: true, tools: [checkStyle(), findBugs(), spotBugs(), cpd(pattern: '**/target/cpd.xml'), pmdParser(pattern: '**/target/pmd.xml')]
         }
     }
 }
