@@ -27,7 +27,7 @@ pipeline {
                                 sh "while ! mysqladmin ping -hdb -P3306 --silent; do sleep 1; done"
                             }
                             docker.image('azul/zulu-openjdk-alpine:8u202').inside("-v $HOME/.m2:/root/.m2:z -u root --link ${c.id}:mysql-server") {
-                                sh "./gradlew clean flyway:migrate -Dflyway.configFiles=./src/main/resources/application.properties -Dflyway.url=jdbc:mysql://mysql-server:3306/example?autoReconnect=true"
+                                sh "./gradlew clean flywayMigrate -Dflyway.configFiles=./src/main/resources/application.properties -Dflyway.url=jdbc:mysql://mysql-server:3306/example?autoReconnect=true"
                             }
                         }
                         stage('Test') {
