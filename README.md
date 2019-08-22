@@ -9,13 +9,13 @@ https://flywaydb.org/
 * マイグレーション
 
 ```bash
-./mvnw flyway:migrate -Dflyway.configFiles=./src/main/resources/application.properties
+./gradlew flywayMmigrate -Dflyway.configFiles=./src/main/resources/application.properties
 ```
 
 * スキーマ情報
 
 ```bash
-./mvnw flyway:info -Dflyway.configFiles=./src/main/resources/application.properties
+./gradlew flywayInfo -Dflyway.configFiles=./src/main/resources/application.properties
 ```
 
 ## 備忘
