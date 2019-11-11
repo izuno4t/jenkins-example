@@ -385,6 +385,7 @@
 		<java.version>1.8</java.version>
 		<sourceEncoding>UTF-8</sourceEncoding>
 		<compileSource>1.8</compileSource>
-		<git.commit>${env.GIT_COMMIT.take(7)}</git.commit>
+		<git.commit>${env.GIT_COMMIT}</git.commit>
+		<git.commit.short>${env.GIT_COMMIT.take(7)}</git.commit.short>
 	</properties>
 </project>
