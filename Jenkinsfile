@@ -40,12 +40,12 @@ pipeline {
                         }
                         stage('Test') {
                             docker.image('openjdk:8').inside("-v $HOME/.m2:/root/.m2:z -v $HOME/.gradle:/root/.gradle  -u root --link ${c.id}:mysql-server") {
-                                sh "export SPRING_CONFIG_ADDITIONAL_LOCATION=file:jenkins/ ./gradlew test"
+                                sh "export SPRING_CONFIG_ADDITIONAL_LOCATION=file:jenkins/; ./gradlew test"
                             }
                         }
                         stage('Verify') {
                             docker.image('openjdk:8').inside("-v $HOME/.m2:/root/.m2:z -v $HOME/.gradle:/root/.gradle  -u root --link ${c.id}:mysql-server") {
-                                sh "export SPRING_CONFIG_ADDITIONAL_LOCATION=file:jenkins/ ./gradlew check"
+                                sh "export SPRING_CONFIG_ADDITIONAL_LOCATION=file:jenkins/; ./gradlew check"
                             }
                         }
                     }
