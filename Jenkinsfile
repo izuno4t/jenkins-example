@@ -1,5 +1,13 @@
 pipeline {
     agent any
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+        disableConcurrentBuilds()
+        timestamps()
+    }
+    triggers {
+        pollSCM('H/5 * * * *')
+    }
     stages {
         stage('PreProcess') {
             steps {
