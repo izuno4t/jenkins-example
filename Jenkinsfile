@@ -45,7 +45,7 @@ pipeline {
                         }
                         stage('Verify') {
                             docker.image('openjdk:8').inside("-v $HOME/.m2:/root/.m2:z -v $HOME/.gradle:/root/.gradle  -u root --link ${c.id}:mysql-server") {
-                                sh "export SPRING_CONFIG_ADDITIONAL_LOCATION=file:jenkins/; export SPRING_ACTIVE_./gradlew check --info"
+                                sh "export SPRING_CONFIG_ADDITIONAL_LOCATION=file:jenkins/; export SPRING_PROFILES_ACTIVE=test; ./gradlew check --info"
                             }
                         }
                     }
