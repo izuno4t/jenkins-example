@@ -35,7 +35,7 @@ pipeline {
                                 sh "while ! mysqladmin ping -hdb -P3306 --silent; do sleep 1; done"
                             }
                             docker.image('openjdk:8').inside("-v $HOME/.m2:/root/.m2:z -v $HOME/.gradle:/root/.gradle -u root --link ${c.id}:mysql-server") {
-                                sh "./gradlew flywayMigrate -Dflyway.configFiles=.jenkins/application-test.properties"
+                                sh "./gradlew flywayMigrate -Dflyway.configFiles=jenkins/application-test.properties"
                             }
                         }
                         stage('Test') {
