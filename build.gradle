@@ -95,7 +95,7 @@ jacocoTestReport {
 }
 
 checkstyle {
-	toolVersion '8.19'
+	toolVersion '8.29'
 	ignoreFailures = true
 	configFile = rootProject.file('config/checkstyle/checkstyle.xml') 
 }
