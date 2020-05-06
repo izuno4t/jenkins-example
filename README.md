@@ -1,6 +1,22 @@
 # jenkins-pipeline-example
 Jenkins Pipeline のサンプル
 
+## PostgreSQL with Docker Compose
+
+
+## PostgreSQL with Docker
+
+`ja_JP.UTF-8`を扱えるようにレジストリのイメージに変更を加えてビルド
+
+```bash
+docker build -t postgres:12_ja . -f docker/postgres/Dockerfile
+```
+
+起動時にデータベースを作成して起動
+
+```bash
+docker run -d -p 5432:5432 -e "POSTGRES_DB=example" -e "POSTGRES_USER=postgres" -e "POSTGRES_PASSWORD=password" -e "POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=ja_JP.UTF-8" postgres:12_ja
+```
 
 ## Flyway
 

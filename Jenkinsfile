@@ -1,5 +1,11 @@
 pipeline {
-    agent any
+    agent {
+        dockerfile {
+            filename 'Dockerfile'
+            dir 'docker/postgres'
+            label 'postgres:12_ja'
+        }
+    }
     stages {
         stage('PreProcess') {
             steps {
@@ -21,12 +27,12 @@ pipeline {
         stage('Test & Verify') {
             steps {
                 script{
-                    docker.image('postgres:12').withRun('-e "POSTGRES_DB=example" -e "POSTGRES_USER=postgres" -e "POSTGRES_PASSWORD=password" -e "POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=ja_JP.UTF-8"') { c ->
+                    docker.image('postgres:12_ja').withRun('-e "POSTGRES_DB=example" -e "POSTGRES_USER=postgres" -e "POSTGRES_PASSWORD=password" -e "POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=ja_JP.UTF-8"') { c ->
                         stage('Database Setup') {
-                            docker.image('postgres:12').inside("--link ${c.id}:db") {
+                            docker.image('postgres:12_ja').inside("--link ${c.id}:db") {
                                 sh "while ! pg_isready -hdb -q -d example -U postgres; do sleep 1; done"
                             }
-                            docker.image('azul/zulu-openjdk-alpine:8u202').inside("-v $HOME/.m2:/root/.m2:z -u root --link ${c.id}:db") {
+                            docker.image('azul/zulu-openjdk-alpine:8').inside("-v $HOME/.m2:/root/.m2:z -u root --link ${c.id}:db") {
                                 sh "./mvnw clean flyway:migrate -Dflyway.configFiles=./src/main/resources/application.properties -Dflyway.url=jdbc:postgresql://db:5432/example"
                             }
                         }
