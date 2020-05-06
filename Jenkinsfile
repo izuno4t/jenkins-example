@@ -37,12 +37,12 @@ pipeline {
                         }
                         stage('Test') {
                             docker.image('azul/zulu-openjdk-alpine:8u202').inside("-v $HOME/.m2:/root/.m2:z -u root --link ${c.id}:db") {
-                                sh "./mvnw clean test -Dspring.datasource.url=jdbc:postgresql://db:5432/example"
+                                sh "./mvnw clean test -Dspring.datasource.url=jdbc:postgresql://db:5432/example?example"
                             }
                         }
                         stage('Verify') {
                             docker.image('azul/zulu-openjdk-alpine:8u202').inside("-v $HOME/.m2:/root/.m2:z -u root --link ${c.id}:db") {
-                                sh "./mvnw verify -Dspring.datasource.url=jdbc:postgresql://db:5432/example"
+                                sh "./mvnw verify -Dspring.datasource.url=jdbc:postgresql://db:5432/example?example"
                             }
                         }
                     }
