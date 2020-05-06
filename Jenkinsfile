@@ -1,17 +1,17 @@
 pipeline {
-    agent {
-        dockerfile {
-            filename 'Dockerfile'
-            dir 'docker/postgres'
-            label 'postgres:12_ja'
-        }
-    }
+    agent any
     stages {
         stage('PreProcess') {
             steps {
                 echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
             }
         }
+        stage('Build docker image') {
+            steps {
+                sh "docker build -t postgres:12_ja docker/postgres"
+            }
+        }
+
         // stage('build') {
         //     agent {
         //         docker {
@@ -32,7 +32,7 @@ pipeline {
                             docker.image('postgres:12_ja').inside("--link ${c.id}:db") {
                                 sh "while ! pg_isready -hdb -q -d example -U postgres; do sleep 1; done"
                             }
-                            docker.image('azul/zulu-openjdk-alpine:8').inside("-v $HOME/.m2:/root/.m2:z -u root --link ${c.id}:db") {
+                            docker.image('azul/zulu-openjdk-alpine:8u202').inside("-v $HOME/.m2:/root/.m2:z -u root --link ${c.id}:db") {
                                 sh "./mvnw clean flyway:migrate -Dflyway.configFiles=./src/main/resources/application.properties -Dflyway.url=jdbc:postgresql://db:5432/example"
                             }
                         }

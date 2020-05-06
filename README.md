@@ -9,7 +9,7 @@ Jenkins Pipeline のサンプル
 `ja_JP.UTF-8`を扱えるようにレジストリのイメージに変更を加えてビルド
 
 ```bash
-docker build -t postgres:12_ja . -f docker/postgres/Dockerfile
+docker build -t postgres:12_ja docker/postgres
 ```
 
 起動時にデータベースを作成して起動
