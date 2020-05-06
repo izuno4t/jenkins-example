@@ -33,6 +33,7 @@ pipeline {
                             }
                             docker.image('azul/zulu-openjdk-alpine:8u202').inside("-v $HOME/.m2:/root/.m2:z -u root --link ${c.id}:db") {
                                 sh "./mvnw clean flyway:migrate -Dflyway.configFiles=./src/main/resources/application.properties -Dflyway.url=jdbc:postgresql://db:5432/example"
+                                sh "./mvnw clean flyway:info -Dflyway.configFiles=./src/main/resources/application.properties -Dflyway.url=jdbc:postgresql://db:5432/example"
                             }
                         }
                         stage('Test') {
