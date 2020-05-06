@@ -26,7 +26,7 @@ pipeline {
                             docker.image('postgres:12').inside("--link ${c.id}:db") {
                                 sh "while ! pg_isready -hdb -q -d example -U postgres; do sleep 1; done"
                             }
-                            docker.image('azul/zulu-openjdk-alpine:8u202').inside("-v $HOME/.m2:/root/.m2:z -u root --link ${c.id}:mysql-server") {
+                            docker.image('azul/zulu-openjdk-alpine:8u202').inside("-v $HOME/.m2:/root/.m2:z -u root --link ${c.id}:db") {
                                 sh "./mvnw clean flyway:migrate -Dflyway.configFiles=./src/main/resources/application.properties -Dflyway.url=jdbc:postgresql://db:5432/example"
                             }
                         }
@@ -101,7 +101,7 @@ pipeline {
     //             }
     //         }
     //     }
-    // }
+    }
     // post {
     //     always {
     //         junit testResults: '**/target/surefire-reports/TEST-*.xml'
