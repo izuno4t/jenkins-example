@@ -11,19 +11,18 @@ pipeline {
                 sh "docker build -t postgres:12_ja docker/postgres"
             }
         }
-
-        // stage('build') {
-        //     agent {
-        //         docker {
-        //             image 'azul/zulu-openjdk-alpine:8u202'
-        //             args '-v $HOME/.m2:/root/.m2:z -u root'
-        //             reuseNode true
-        //         }
-        //     }
-        //     steps {
-        //         sh './mvnw clean compile'
-        //     }
-        // }
+        stage('build') {
+            agent {
+                docker {
+                    image 'azul/zulu-openjdk-alpine:8u202'
+                    args '-v $HOME/.m2:/root/.m2:z -u root'
+                    reuseNode true
+                }
+            }
+            steps {
+                sh './mvnw clean compile'
+            }
+        }
         stage('Test & Verify') {
             steps {
                 script{
@@ -36,16 +35,16 @@ pipeline {
                                 sh "./mvnw clean flyway:migrate -Dflyway.configFiles=./src/main/resources/application.properties -Dflyway.url=jdbc:postgresql://db:5432/example"
                             }
                         }
-                        // stage('Test') {
-                        //     docker.image('azul/zulu-openjdk-alpine:8u202').inside("-v $HOME/.m2:/root/.m2:z -u root --link ${c.id}:mysql-server") {
-                        //         sh "./mvnw clean test -Dspring.datasource.url=jdbc:mysql://mysql-server:3306/example?autoreconnect=true"
-                        //     }
-                        // }
-                        // stage('Verify') {
-                        //     docker.image('azul/zulu-openjdk-alpine:8u202').inside("-v $HOME/.m2:/root/.m2:z -u root --link ${c.id}:mysql-server") {
-                        //         sh "./mvnw verify -Dspring.datasource.url=jdbc:mysql://mysql-server:3306/example?autoreconnect=true"
-                        //     }
-                        // }
+                        stage('Test') {
+                            docker.image('azul/zulu-openjdk-alpine:8u202').inside("-v $HOME/.m2:/root/.m2:z -u root --link ${c.id}:mysql-server") {
+                                sh "./mvnw clean test -Dspring.datasource.url=jdbc:postgresql://db:5432/example"
+                            }
+                        }
+                        stage('Verify') {
+                            docker.image('azul/zulu-openjdk-alpine:8u202').inside("-v $HOME/.m2:/root/.m2:z -u root --link ${c.id}:mysql-server") {
+                                sh "./mvnw verify -Dspring.datasource.url=jdbc:postgresql://db:5432/example"
+                            }
+                        }
                     }
                 }
             }
@@ -108,15 +107,15 @@ pipeline {
     //         }
     //     }
     }
-    // post {
-    //     always {
-    //         junit testResults: '**/target/surefire-reports/TEST-*.xml'
-    //         jacoco()
-    //     }
-    //     success {
-    //         recordIssues enabledForFailure: true, tools: [mavenConsole(), java(), javaDoc()]
-    //         recordIssues enabledForFailure: true, aggregatingResults: true, tools: [checkStyle(), findBugs(), spotBugs(), cpd(pattern: '**/target/cpd.xml'), pmdParser(pattern: '**/target/pmd.xml')]
-    //     }
-    // }
+    post {
+        always {
+            junit testResults: '**/target/surefire-reports/TEST-*.xml'
+            jacoco()
+        }
+        success {
+            recordIssues enabledForFailure: true, tools: [mavenConsole(), java(), javaDoc()]
+            recordIssues enabledForFailure: true, aggregatingResults: true, tools: [checkStyle(), findBugs(), spotBugs(), cpd(pattern: '**/target/cpd.xml'), pmdParser(pattern: '**/target/pmd.xml')]
+        }
+    }
 }
 
