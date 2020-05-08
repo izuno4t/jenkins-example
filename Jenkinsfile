@@ -63,6 +63,12 @@ pipeline {
                     }
                     steps {
                         sh './mvnw javadoc:javadoc'
+                        step([
+                                $class: 'JavadocArchiver',
+                                // Javadocのindex.htmlがあるフォルダのパスを指定する
+                                javadocDir: "${javadocDir}",
+                                keepAll: true
+                            ])
                     }
                 }
                 stage('ステップカウント') {
@@ -114,7 +120,7 @@ pipeline {
             jacoco()
         }
         success {
-            archiveArtifacts "**/*.jar, **/*.war"
+            archiveArtifacts "**/target/*.jar, **/target/*.war"
             recordIssues enabledForFailure: true, tools: [mavenConsole(), java(), javaDoc()]
             recordIssues enabledForFailure: true, aggregatingResults: true, tools: [checkStyle(), findBugs(), spotBugs(), cpd(pattern: '**/target/cpd.xml'), pmdParser(pattern: '**/target/pmd.xml')]
         }
