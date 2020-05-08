@@ -114,6 +114,7 @@ pipeline {
             jacoco()
         }
         success {
+            archiveArtifacts "**/*.jar, **/*.war"
             recordIssues enabledForFailure: true, tools: [mavenConsole(), java(), javaDoc()]
             recordIssues enabledForFailure: true, aggregatingResults: true, tools: [checkStyle(), findBugs(), spotBugs(), cpd(pattern: '**/target/cpd.xml'), pmdParser(pattern: '**/target/pmd.xml')]
         }
