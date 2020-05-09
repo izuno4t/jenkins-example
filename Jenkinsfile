@@ -66,7 +66,7 @@ pipeline {
                         step([
                                 $class: 'JavadocArchiver',
                                 // Javadocのindex.htmlがあるフォルダのパスを指定する
-                                javadocDir: "${javadocDir}",
+                                javadocDir: "target/site/apidocs",
                                 keepAll: true
                             ])
                     }
