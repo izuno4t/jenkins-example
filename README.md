@@ -1,5 +1,7 @@
 # jenkins-example
 
+![Java CI with Maven](https://github.com/izuno4t/jenkins-example/workflows/Java%20CI%20with%20Maven/badge.svg)
+
 Jenkins で使うための Maven POM 設定のサンプル
 
 ## maven
