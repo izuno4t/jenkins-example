@@ -29,9 +29,9 @@ pipeline {
         stage('Test & Verify') {
             steps {
                 script{
-                    docker.image('mysql:5.7').withRun('-e "MYSQL_DATABASE=example" -e "MYSQL_USER=demo" -e "MYSQL_PASSWORD=password" -e "MYSQL_ROOT_PASSWORD=password"') { c ->
+                    docker.image('mysql:8.0').withRun('-e "MYSQL_DATABASE=example" -e "MYSQL_USER=mysql" -e "MYSQL_PASSWORD=password" -e "MYSQL_ROOT_PASSWORD=password"') { c ->
                         stage('Database Setup') {
-                            docker.image('mysql:5.7').inside("--link ${c.id}:db") {
+                            docker.image('mysql:8.0').inside("--link ${c.id}:db") {
                                 sh "while ! mysqladmin ping -hdb -P3306 --silent; do sleep 1; done"
                             }
                             docker.image('openjdk:8').inside("-v $HOME/.m2:/root/.m2:z -v $HOME/.gradle:/root/.gradle -u root --link ${c.id}:mysql-server") {
