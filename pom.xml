@@ -1,26 +1,26 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.example</groupId>
 	<artifactId>jenkins-playground</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<description>Jenkins のテスト用プロジェクトです。</description>
+	<packaging>war</packaging>
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-			<version>3.3.2</version>
+			<version>3.10</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
-			<version>3.1.0</version>
+			<version>4.0.1</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.11</version>
+			<version>4.13</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -29,6 +29,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
+				<version>3.9.0</version>
 				<configuration>
 					<locales>ja</locales>
 					<inputEncoding>UTF-8</inputEncoding>
@@ -37,6 +38,7 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.1</version>
 				<configuration>
 					<debug>false</debug>
 					<encoding>UTF-8</encoding>
@@ -116,6 +118,7 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-pmd-plugin</artifactId>
+				<version>3.13.0</version>
 				<configuration>
 					<linkXref>true</linkXref>
 					<sourceEncoding>${sourceEncoding}</sourceEncoding>
@@ -128,6 +131,7 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>3.1.1</version>
 				<configuration>
 					<configLocation>checkstyle.xml</configLocation>
 					<encoding>${sourceEncoding}</encoding>
@@ -136,6 +140,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>2.7</version>
 				<configuration>
 					<formats>
 						<format>xml</format>
@@ -178,5 +183,4 @@
 			<url>http://snapshots.repository.codehaus.org</url>
 		</pluginRepository>
 	</pluginRepositories>
-	<packaging>war</packaging>
 </project>
