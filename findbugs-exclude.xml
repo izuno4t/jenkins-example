@@ -1,0 +1,11 @@
+<FindBugsFilter>
+	<Match>
+	  <Class name=".*" />
+	</Match>
+    <Match>
+	  <BugPattern name="NM_SAME_SIMPLE_NAME_AS_SUPERCLASS"/>
+	</Match>
+    <Match>
+      <BugCode name="EI,EI2"/>
+	</Match>
+</FindBugsFilter>

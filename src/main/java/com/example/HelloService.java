@@ -1,4 +1,4 @@
-package com.example.service;
+package com.example;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -15,12 +15,9 @@ public class HelloService {
 	 * @return 挨拶文を返します。
 	 */
 	public String sayHello() {
-		// FIXME
 		if (true) {
-			// TODO
 			if (true) {
 				if (false) {
-					// XXX
 					return "aaa";
 				}
 			}
