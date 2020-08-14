@@ -6,6 +6,9 @@ pipeline {
             args '-v /.cache/ -v /.bower/  -v /.config/configstore/'
         }
     }
+    environment {
+        HOME = '.'
+    }
     stages {
         stage('Test') {
             steps {
