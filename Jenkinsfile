@@ -5,6 +5,7 @@ pipeline {
     stages {
         stage('Test') {
             steps {
+                sh 'chown -R 501:20 /.npm'
                 sh 'npm install'
                 sh 'npm test'
             }
