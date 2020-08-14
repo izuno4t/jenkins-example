@@ -1,6 +1,10 @@
 pipeline {
     agent {
-        docker { image 'node:12-alpine' }
+        dockerfile {
+            filename 'Dockerfile'
+            dir 'docker/node'
+            args '-v /.cache/ -v /.bower/  -v /.config/configstore/'
+        }
     }
     stages {
         stage('Test') {
