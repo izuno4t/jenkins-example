@@ -12,8 +12,8 @@ pipeline {
     stages {
         stage('Test') {
             steps {
-                // sh 'npm install'
-                sh 'npm install node-sass'
+                sh 'npm install'
+                // sh 'npm install node-sass'
                 sh 'npm test'
             }
         }
