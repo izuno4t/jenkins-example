@@ -9,7 +9,7 @@ pipeline {
     }
     post {
         success {
-            recordIssues enabledForFailure: true, tools: [taskScanner()]
+            recordIssues enabledForFailure: true, tools:  [taskScanner(excludePattern: '**/test/**', highTags: 'FIXME', ignoreCase: true, includePattern: '**/*.java,**/*.sql', lowTags: 'XXX', normalTags: 'TODO')]
         }
     }
 }
