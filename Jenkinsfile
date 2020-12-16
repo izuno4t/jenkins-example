@@ -26,7 +26,7 @@ pipeline {
         stage('Test & Verify') {
             steps {
                 script{
-                    docker.image('postgres:11_ja').withRun('-e "POSTGRES_DB=example" -e "POSTGRES_USER=postgres" -e "POSTGRES_PASSWORD=password" -e "POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=ja_JP.UTF-8" -v "$(pwd)/docker/postgres/initdb.d:/docker-entrypoint-initdb.d" -v "$(pwd)/docker/postgres/conf.d:/etc/postgresql"') { c ->
+                    docker.image('postgres:11_ja').withRun('-e "POSTGRES_DB=example" -e "POSTGRES_USER=postgres" -e "POSTGRES_PASSWORD=password" -e "POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=ja_JP.UTF-8" -v "$(pwd)/docker/postgres/conf.d:/etc/postgresql"') { c ->
                         stage('Database Setup') {
                             docker.image('postgres:11_ja').inside("--link ${c.id}:db") {
                                 sh "while ! pg_isready -hdb -q -d example -U postgres; do sleep 1; done"
