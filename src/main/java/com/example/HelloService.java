@@ -31,6 +31,7 @@ public class HelloService {
 	 * @return ハッピーの文字列
 	 */
 	public String sayHappy() {
+		// FIXME no happy
 		return StringUtils.upperCase("happy");
 	}
 
